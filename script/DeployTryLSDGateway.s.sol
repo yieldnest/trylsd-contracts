@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.21 <0.9.0;
 
-import { Foo } from "../src/Foo.sol";
+import { TryLSDGateway } from "../src/contracts/TryLSDGateway.sol";
 
 import { BaseScript } from "./Base.s.sol";
 
 /// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
-contract Deploy is BaseScript {
-    function run() public broadcast returns (Foo foo) {
-        foo = new Foo();
+contract DeployTryLSDGateway is BaseScript {
+    function run() public broadcast returns (TryLSDGateway _gateway) {
+        _gateway = new TryLSDGateway();
     }
 }

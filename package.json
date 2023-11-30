@@ -26,9 +26,12 @@
     "lint:sol": "forge fmt --check && pnpm solhint {script,src,test}/**/*.sol",
     "prettier:check": "prettier --check **/*.{json,md,yml} --ignore-path=.prettierignore",
     "prettier:write": "prettier --write **/*.{json,md,yml} --ignore-path=.prettierignore",
-    "test": "forge test",
+    "test": "export $(cat .env | xargs) && forge test --fork-url $MAINNET_RPC_URL --fork-block-number $FORK_BLOCK_NUMBER",
+    "test:watch": "export $(cat .env | xargs) && forge test --fork-url $MAINNET_RPC_URL --fork-block-number $FORK_BLOCK_NUMBER -vvv --watch",
     "test:coverage": "forge coverage",
-    "test:coverage:report": "forge coverage --report lcov && genhtml lcov.info --branch-coverage --output-dir coverage"
+    "test:coverage:report": "forge coverage --report lcov && genhtml lcov.info --branch-coverage --output-dir coverage",
+    "anvil-mainnet": "export $(cat .env | xargs) && anvil --chain-id 1337 --fork-url $MAINNET_RPC_URL --fork-block-number $FORK_BLOCK_NUMBER",
+    "deploy:local": "export $(cat .env | xargs) && forge script DeployTryLSDGateway --broadcast --rpc-url $LOCAL_RPC_URL --private-key $PRIVATE_KEY"
   },
   "dependencies": {
     "solhint": "^3.6.2"
