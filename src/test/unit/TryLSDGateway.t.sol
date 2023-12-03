@@ -55,49 +55,49 @@ contract TryLSDGatewayTest is Test {
                             CONTRACT TESTS
     //////////////////////////////////////////////////////////////*/
 
-//    function testDepositAndSwap() public {
-//        // setup our deposit user
-//        address userDeposit = vm.addr(0x200);
-//        // give 100 eth
-//        vm.deal(userDeposit, 100 ether);
-//        // deposit 10 eth to the gateway
-//
-//        assertEq(_tryLSD.balanceOf(userDeposit), 0);
-//
-//        // estimate amount of shares user should get, for slippage
-//        uint256 calculatedShares = _gateway.calculatePoolShares(10 ether);
-//        // 0.1% slippage
-//        uint256 minShares = (calculatedShares * 999) / 1000;
-//
-//        // Prepare to check deposit event
-//        vm.expectEmit(true, true, false, false, address(_gateway));
-//        // We emit the event we expect to see.
-//        emit Deposit(userDeposit, userDeposit, 0, 0);
-//
-//        // deposit 0 eth to the gateway: TooLittleEthError
-//        vm.expectRevert(0x4b1175db);
-//        vm.prank(userDeposit);
-//        _gateway.swapAndDeposit{value: 0 ether}(userDeposit, minShares);
-//
-//        // deposit 10 eth to the gateway but with too high slippage: MinSharesSlippageError
-//        vm.expectRevert(0x8517304e);
-//        vm.prank(userDeposit);
-//        _gateway.swapAndDeposit{value: 10 ether}(userDeposit, minShares * 2);
-//
-//        // deposit 10 eth to the gateway
-//        vm.prank(userDeposit);
-//        uint256 shares = _gateway.swapAndDeposit{value: 10 ether}(
-//            userDeposit,
-//            minShares
-//        );
-//
-//        // quick slippage check
-//        assertGt(shares, minShares);
-//        // check that the pool shares were minted
-//        assertEq(_tryLSD.balanceOf(userDeposit), shares);
-//        // check the pool shares amount
-//        assertGt(_tryLSD.balanceOf(userDeposit), 3e18);
-//    }
+    function testDepositAndSwap() public {
+        // setup our deposit user
+        address userDeposit = vm.addr(0x200);
+        // give 100 eth
+        vm.deal(userDeposit, 100 ether);
+        // deposit 10 eth to the gateway
+
+        assertEq(_tryLSD.balanceOf(userDeposit), 0);
+
+        // estimate amount of shares user should get, for slippage
+        uint256 calculatedShares = _gateway.calculatePoolShares(10 ether);
+        // 0.1% slippage
+        uint256 minShares = (calculatedShares * 999) / 1000;
+
+        // Prepare to check deposit event
+        vm.expectEmit(true, true, false, false, address(_gateway));
+        // We emit the event we expect to see.
+        emit Deposit(userDeposit, userDeposit, 0, 0);
+
+        // deposit 0 eth to the gateway: TooLittleEthError
+        vm.expectRevert(0x4b1175db);
+        vm.prank(userDeposit);
+        _gateway.swapAndDeposit{value: 0 ether}(userDeposit, minShares);
+
+        // deposit 10 eth to the gateway but with too high slippage: MinSharesSlippageError
+        vm.expectRevert(0x8517304e);
+        vm.prank(userDeposit);
+        _gateway.swapAndDeposit{value: 10 ether}(userDeposit, minShares * 2);
+
+        // deposit 10 eth to the gateway
+        vm.prank(userDeposit);
+        uint256 shares = _gateway.swapAndDeposit{value: 10 ether}(
+            userDeposit,
+            minShares
+        );
+
+        // quick slippage check
+        assertGt(shares, minShares);
+        // check that the pool shares were minted
+        assertEq(_tryLSD.balanceOf(userDeposit), shares);
+        // check the pool shares amount
+        assertGt(_tryLSD.balanceOf(userDeposit), 3e18);
+    }
 
     function testDepositAndSwapLargeAmountAndWithdrawAfter() public {
         // setup our deposit user
