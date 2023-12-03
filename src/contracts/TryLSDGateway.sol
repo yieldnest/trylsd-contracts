@@ -120,7 +120,7 @@ contract TryLSDGateway {
                             PAYABLE LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    bool _startedWithdraw;
+    bool internal _startedWithdraw;
 
     fallback() external payable {
         // should not send eth directly to this contract, use swapAndDeposit function
