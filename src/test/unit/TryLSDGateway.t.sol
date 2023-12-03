@@ -151,6 +151,59 @@ contract TryLSDGatewayTest is Test {
         assertGt(ethReceived, minEthOnWithdrawal);
     }
 
+    function testDepositWithREth() public {
+        // setup our deposit user
+        address userDeposit = vm.addr(0x200);
+
+        uint depositAmount = 10 ether;
+        // give 100 eth
+        vm.deal(userDeposit, 100000 ether);
+        // deposit 10 eth to the gateway
+
+        assertEq(_tryLSD.balanceOf(userDeposit), 0);
+
+        // estimate amount of shares user should get, for slippage
+        uint256 calculatedShares = _gateway.calculatePoolShares(depositAmount);
+        // 0.1% slippage
+        uint256 minShares = (calculatedShares * 999) / 1000;
+
+//        // Prepare to check deposit event
+//        vm.expectEmit(true, true, false, false, address(_gateway));
+//        // We emit the event we expect to see.
+//        emit Deposit(userDeposit, userDeposit, 0, 0);
+
+        // deposit large deposit to the gateway
+        vm.prank(userDeposit);
+        uint256 shares = _gateway.swapAndDepositREth{value: depositAmount}(
+            userDeposit,
+            minShares
+        );
+
+        // quick slippage check
+        assertGt(shares, minShares);
+        // check that the pool shares were minted
+        assertEq(_tryLSD.balanceOf(userDeposit), shares);
+        // check the pool shares amount
+        assertGt(_tryLSD.balanceOf(userDeposit), 3e18);
+
+//        address userEthReceiver = vm.addr(0x202);
+//
+//        vm.prank(userDeposit);
+//        _tryLSD.approve(address(_gateway), shares);
+//
+//        vm.prank(userDeposit);
+//        uint256 ethReceived = _gateway.withdrawAndSwap(
+//            userEthReceiver,
+//            shares,
+//            0
+//        );
+//
+//        uint256 minEthOnWithdrawal = (depositAmount * 995) / 1000;
+//        // quick slippage check of 0.5%
+//        assertGt(ethReceived, minEthOnWithdrawal);
+    }
+
+
     function testDepositAndSwapSmallAmountAndWithdrawAfter() public {
         // setup our deposit user
         address userDeposit = vm.addr(0x200);

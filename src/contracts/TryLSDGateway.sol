@@ -215,6 +215,40 @@ contract TryLSDGateway {
         emit Deposit(msg.sender, owner, msg.value, shares);
     }
 
+    function swapAndDepositREth(
+        address owner,
+        uint256 minShares
+    ) public payable returns (uint256 shares) {
+        // should send more than 0 eth
+        if (msg.value == 0) revert TooLittleEthError();
+
+        uint256 singleSwapAmount = msg.value;
+
+        // exchange from eth to steth, target amount and minAmount (for slippage)
+        uint256 rethAmount = _ethToReth.exchange_underlying{
+                value: singleSwapAmount
+            }(
+            0,
+            1,
+            singleSwapAmount,
+            0 // min amount set to 0 because we check pool shares for slippage
+        );
+
+        // add liquidity to pool
+        shares = _tryLSD.add_liquidity(
+            [0, rethAmount, 0],
+            0, // min shares set to 0 because I check myself for slippage
+            false,
+            owner
+        );
+
+        // Check slippage
+        if (shares <= minShares) revert MinSharesSlippageError();
+
+        // emit deposit event
+        emit Deposit(msg.sender, owner, msg.value, shares);
+    }
+
     /*//////////////////////////////////////////////////////////////
                             WITHDRAW LOGIC
     //////////////////////////////////////////////////////////////*/
