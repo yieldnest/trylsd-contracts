@@ -66,7 +66,7 @@ contract TryLSDGateway {
     //////////////////////////////////////////////////////////////*/
 
     // eth mainnet wsteth
-    IWstETH internal _wsteth =
+    IWstETH internal immutable _wsteth =
         IWstETH(0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0);
     // eth mainnet steth
     IERC20 internal _steth = IERC20(0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84);
@@ -262,6 +262,9 @@ contract TryLSDGateway {
 
         // this might be useless as transferFrom will revert itself if it fails
         if (success == false) revert TransferFromFailed();
+
+
+        console.log("Debug 1");
 
         uint256[3] memory amounts = _tryLSD.remove_liquidity(
             shares,
