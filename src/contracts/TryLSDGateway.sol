@@ -144,6 +144,8 @@ contract TryLSDGateway {
         uint256 depositAmount
     ) public view returns (uint256 shares) {
         uint256 singleSwapAmount = depositAmount / 3;
+        // we do this to avoid collecting dust due to rounding
+        uint256 lastSwapAmount = depositAmount / 3 + (depositAmount % 3);
 
         // for get_dy asset 0 is eth, asset 1 is steth
         uint256 stethAmount = _ethToSteth.get_dy(0, 1, singleSwapAmount);
@@ -152,7 +154,7 @@ contract TryLSDGateway {
         // for get_dy asset 0 is eth, asset 1 is reth
         uint256 rethAmount = _ethToReth.get_dy(0, 1, singleSwapAmount);
         // for get_dy asset 0 is eth, asset 1 is frxeth
-        uint256 frxethAmount = _ethToFrxeth.get_dy(0, 1, singleSwapAmount);
+        uint256 frxethAmount = _ethToFrxeth.get_dy(0, 1, lastSwapAmount);
         // calculate the amount of sfrxeth we get for frxethAmount of eth
         uint256 sfrxethAmount = _sfrxeth.convertToShares(frxethAmount);
 
@@ -171,6 +173,8 @@ contract TryLSDGateway {
         if (msg.value == 0) revert TooLittleEthError();
 
         uint256 singleSwapAmount = msg.value / 3;
+        // we do this to avoid collecting dust due to rounding
+        uint256 lastSwapAmount = msg.value / 3 + (msg.value % 3);
 
         // exchange from eth to steth, target amount and minAmount (for slippage)
         uint256 stethAmount = _ethToSteth.exchange{value: singleSwapAmount}(
@@ -191,10 +195,10 @@ contract TryLSDGateway {
             0 // min amount set to 0 because we check pool shares for slippage
         );
         // exchange from eth to steth, target amount and minAmount (for slippage)
-        uint256 frxethAmount = _ethToFrxeth.exchange{value: singleSwapAmount}(
+        uint256 frxethAmount = _ethToFrxeth.exchange{value: lastSwapAmount}(
             0,
             1,
-            singleSwapAmount,
+            lastSwapAmount,
             0 // min amount set to 0 because we check pool shares for slippage
         );
         // then wrap to sfrxeth
