@@ -17,19 +17,10 @@ contract TryLSDGateway {
     //////////////////////////////////////////////////////////////*/
 
     // Event to be emitted when a user deposits through the Gateway
-    event Deposit(
-        address indexed sender,
-        address indexed owner,
-        uint256 ethAmount,
-        uint256 shares
-    );
+    event Deposit(address indexed sender, address indexed owner, uint256 ethAmount, uint256 shares);
 
     event Withdraw(
-        address indexed sender,
-        address indexed receiver,
-        address indexed owner,
-        uint256 ethAmount,
-        uint256 shares
+        address indexed sender, address indexed receiver, address indexed owner, uint256 ethAmount, uint256 shares
     );
 
     /*//////////////////////////////////////////////////////////////
@@ -66,8 +57,7 @@ contract TryLSDGateway {
     //////////////////////////////////////////////////////////////*/
 
     // eth mainnet wsteth
-    IWstETH internal _wsteth =
-        IWstETH(0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0);
+    IWstETH internal _wsteth = IWstETH(0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0);
     // eth mainnet steth
     IERC20 internal _steth = IERC20(0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84);
 
@@ -75,23 +65,17 @@ contract TryLSDGateway {
     IERC20 internal _reth = IERC20(0xae78736Cd615f374D3085123A210448E74Fc6393);
 
     // eth mainnet sfrxeth
-    IsfrxETH internal _sfrxeth =
-        IsfrxETH(0xac3E018457B222d93114458476f3E3416Abbe38F);
+    IsfrxETH internal _sfrxeth = IsfrxETH(0xac3E018457B222d93114458476f3E3416Abbe38F);
     // eth mainnet frxeth
-    IERC20 internal _frxeth =
-        IERC20(0x5E8422345238F34275888049021821E8E08CAa1f);
+    IERC20 internal _frxeth = IERC20(0x5E8422345238F34275888049021821E8E08CAa1f);
 
     // all the curve pools needed for swaps
-    ICurvePool1 internal _ethToSteth =
-        ICurvePool1(0xDC24316b9AE028F1497c275EB9192a3Ea0f67022);
-    ICurvePool2 internal _ethToReth =
-        ICurvePool2(0x0f3159811670c117c372428D4E69AC32325e4D0F);
-    ICurvePool1 internal _ethToFrxeth =
-        ICurvePool1(0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577);
+    ICurvePool1 internal _ethToSteth = ICurvePool1(0xDC24316b9AE028F1497c275EB9192a3Ea0f67022);
+    ICurvePool2 internal _ethToReth = ICurvePool2(0x0f3159811670c117c372428D4E69AC32325e4D0F);
+    ICurvePool1 internal _ethToFrxeth = ICurvePool1(0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577);
 
     // curve tryLSD mainnet pool
-    ICurvePool2 internal _tryLSD =
-        ICurvePool2(0x2570f1bD5D2735314FC102eb12Fc1aFe9e6E7193);
+    ICurvePool2 internal _tryLSD = ICurvePool2(0x2570f1bD5D2735314FC102eb12Fc1aFe9e6E7193);
 
     /*//////////////////////////////////////////////////////////////
                             CONSTRUCTOR
@@ -140,9 +124,7 @@ contract TryLSDGateway {
                             DEPOSIT LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function calculatePoolShares(
-        uint256 depositAmount
-    ) public view returns (uint256 shares) {
+    function calculatePoolShares(uint256 depositAmount) public view returns (uint256 shares) {
         uint256 singleSwapAmount = depositAmount / 3;
         // we do this to avoid collecting dust due to rounding
         uint256 lastSwapAmount = depositAmount / 3 + (depositAmount % 3);
@@ -159,16 +141,10 @@ contract TryLSDGateway {
         uint256 sfrxethAmount = _sfrxeth.convertToShares(frxethAmount);
 
         // finally calculate the amount of pool shares we get for the 3 tokens
-        shares = _tryLSD.calc_token_amount(
-            [wstethAmount, rethAmount, sfrxethAmount],
-            true
-        );
+        shares = _tryLSD.calc_token_amount([wstethAmount, rethAmount, sfrxethAmount], true);
     }
 
-    function swapAndDeposit(
-        address owner,
-        uint256 minShares
-    ) public payable returns (uint256 shares) {
+    function swapAndDeposit(address owner, uint256 minShares) public payable returns (uint256 shares) {
         // should send more than 0 eth
         if (msg.value == 0) revert TooLittleEthError();
 
@@ -186,9 +162,7 @@ contract TryLSDGateway {
         // then wrap to wsteth
         uint256 wstethAmount = _wsteth.wrap(stethAmount);
         // exchange from eth to steth, target amount and minAmount (for slippage)
-        uint256 rethAmount = _ethToReth.exchange_underlying{
-            value: singleSwapAmount
-        }(
+        uint256 rethAmount = _ethToReth.exchange_underlying{value: singleSwapAmount}(
             0,
             1,
             singleSwapAmount,
@@ -223,9 +197,7 @@ contract TryLSDGateway {
                             WITHDRAW LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function calculateEth(
-        uint256 shares
-    ) public view returns (uint256 ethAmount) {
+    function calculateEth(uint256 shares) public view returns (uint256 ethAmount) {
         uint256 totalSupply = _tryLSD.totalSupply();
 
         uint256 wstethAmount = (_tryLSD.balances(0) * shares) / totalSupply;
@@ -234,28 +206,20 @@ contract TryLSDGateway {
 
         // calculate the amount of eth we get for singleSwapAmount of wsteth
         // for get_dy asset 0 is eth, asset 1 is frxeth
-        ethAmount = _ethToSteth.get_dy(
-            1,
-            0,
-            _wsteth.getStETHByWstETH(wstethAmount)
-        );
+        ethAmount = _ethToSteth.get_dy(1, 0, _wsteth.getStETHByWstETH(wstethAmount));
         // calculate the amount of eth we get for singleSwapAmount of reth
         // for get_dy asset 0 is eth, asset 1 is frxeth
         ethAmount += _ethToReth.get_dy(1, 0, rethAmount);
         // calculate the amount of eth we get for singleSwapAmount of sfrxeth
         // for get_dy asset 0 is eth, asset 1 is frxeth
-        ethAmount += _ethToFrxeth.get_dy(
-            1,
-            0,
-            _sfrxeth.convertToAssets(sfrxethAmount)
-        );
+        ethAmount += _ethToFrxeth.get_dy(1, 0, _sfrxeth.convertToAssets(sfrxethAmount));
     }
 
-    function withdrawAndSwap(
-        address receiver,
-        uint256 shares,
-        uint256 minEth
-    ) public payable returns (uint256 ethAmount) {
+    function withdrawAndSwap(address receiver, uint256 shares, uint256 minEth)
+        public
+        payable
+        returns (uint256 ethAmount)
+    {
         // this variable is to prevent a loop where pool would send eth to the gateway and trigger a deposit
         _startedWithdraw = true;
 
@@ -267,12 +231,8 @@ contract TryLSDGateway {
         // this might be useless as transferFrom will revert itself if it fails
         if (success == false) revert TransferFromFailed();
 
-        uint256[3] memory amounts = _tryLSD.remove_liquidity(
-            shares,
-            [uint256(0), uint256(0), uint256(0)],
-            false,
-            address(this)
-        );
+        uint256[3] memory amounts =
+            _tryLSD.remove_liquidity(shares, [uint256(0), uint256(0), uint256(0)], false, address(this));
 
         // unwrap wsteth to steth
         uint256 stethAmount = _wsteth.unwrap(amounts[0]);
@@ -293,11 +253,7 @@ contract TryLSDGateway {
         );
 
         // redeem frxeth from sfrxeth
-        uint256 frxethAmount = _sfrxeth.redeem(
-            amounts[2],
-            address(this),
-            address(this)
-        );
+        uint256 frxethAmount = _sfrxeth.redeem(amounts[2], address(this), address(this));
         // exchange frxeth to eth
         uint256 frxethToEthAmount = _ethToFrxeth.exchange(
             1, // from frxeth
@@ -311,7 +267,7 @@ contract TryLSDGateway {
         // Check slippage
         if (ethAmount <= minEth) revert MinEthSlippageError();
 
-        (bool sent, ) = receiver.call{value: ethAmount}("");
+        (bool sent,) = receiver.call{value: ethAmount}("");
 
         if (sent == false) revert FailedToSendEth();
 

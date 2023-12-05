@@ -15,19 +15,10 @@ contract TryLSDGatewayTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     // Event to be emitted when a user deposits through the Gateway
-    event Deposit(
-        address indexed sender,
-        address indexed owner,
-        uint256 ethAmount,
-        uint256 shares
-    );
+    event Deposit(address indexed sender, address indexed owner, uint256 ethAmount, uint256 shares);
 
     event Withdraw(
-        address indexed sender,
-        address indexed receiver,
-        address indexed owner,
-        uint256 ethAmount,
-        uint256 shares
+        address indexed sender, address indexed receiver, address indexed owner, uint256 ethAmount, uint256 shares
     );
 
     /*//////////////////////////////////////////////////////////////
@@ -38,8 +29,7 @@ contract TryLSDGatewayTest is Test {
     TryLSDGateway internal _gateway;
 
     // curve tryLSD mainnet pool
-    ICurvePool2 internal _tryLSD =
-        ICurvePool2(0x2570f1bD5D2735314FC102eb12Fc1aFe9e6E7193);
+    ICurvePool2 internal _tryLSD = ICurvePool2(0x2570f1bD5D2735314FC102eb12Fc1aFe9e6E7193);
 
     /*//////////////////////////////////////////////////////////////
                                 SET UP
@@ -84,10 +74,7 @@ contract TryLSDGatewayTest is Test {
 
         // deposit 10 eth to the gateway
         vm.prank(userDeposit);
-        uint256 shares = _gateway.swapAndDeposit{value: 10 ether}(
-            userDeposit,
-            minShares
-        );
+        uint256 shares = _gateway.swapAndDeposit{value: 10 ether}(userDeposit, minShares);
 
         // quick slippage check
         assertGt(shares, minShares);
@@ -110,10 +97,7 @@ contract TryLSDGatewayTest is Test {
         uint256 minShares = (calculatedShares * 999) / 1000;
         // deposit 10 eth to the gateway
         vm.prank(userDeposit);
-        uint256 shares = _gateway.swapAndDeposit{value: 10 ether}(
-            userDeposit,
-            minShares
-        );
+        uint256 shares = _gateway.swapAndDeposit{value: 10 ether}(userDeposit, minShares);
 
         // approve pool shares tokens transfer to the gateway
         vm.prank(userDeposit);
@@ -147,11 +131,7 @@ contract TryLSDGatewayTest is Test {
 
         // withdraw
         vm.prank(userDeposit);
-        uint256 ethReceived = _gateway.withdrawAndSwap(
-            userEthReceiver,
-            shares,
-            minEth
-        );
+        uint256 ethReceived = _gateway.withdrawAndSwap(userEthReceiver, shares, minEth);
         // quick slippage check
         assertGt(ethReceived, minEth);
         // check that the eth was sent
