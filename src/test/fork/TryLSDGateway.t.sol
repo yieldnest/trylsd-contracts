@@ -36,6 +36,10 @@ contract TryLSDGatewayTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     function setUp() public {
+        // these tests are for mainnet only
+        if (block.chainid != 1) {
+            return ;
+        }
         _gateway = new TryLSDGateway();
     }
 
@@ -44,6 +48,10 @@ contract TryLSDGatewayTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     function testDepositAndSwap() public {
+        // these tests are for mainnet only
+        if (block.chainid != 1) {
+            return ;
+        }
         // setup our deposit user
         address userDeposit = vm.addr(0x200);
         // give 100 eth
@@ -85,6 +93,10 @@ contract TryLSDGatewayTest is Test {
     }
 
     function testWithdrawAndSwap() public {
+        // these tests are for mainnet only
+        if (block.chainid != 1) {
+            return ;
+        }
         // setup our deposit user
         address userDeposit = vm.addr(0x200);
         address userEthReceiver = vm.addr(0x201);
