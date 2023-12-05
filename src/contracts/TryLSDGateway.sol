@@ -9,8 +9,6 @@ import {ICurvePool2} from "../interfaces/ICurvePool.sol";
 import {IsfrxETH} from "../interfaces/IsfrxETH.sol";
 import {IWstETH} from "../interfaces/IWstETH.sol";
 
-import "forge-std/console.sol";
-
 contract TryLSDGateway {
     /*//////////////////////////////////////////////////////////////
                                 EVENTS
