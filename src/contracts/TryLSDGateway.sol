@@ -57,25 +57,25 @@ contract TryLSDGateway {
     //////////////////////////////////////////////////////////////*/
 
     // eth mainnet wsteth
-    IWstETH internal _wsteth = IWstETH(0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0);
+    IWstETH internal immutable _wsteth = IWstETH(0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0);
     // eth mainnet steth
-    IERC20 internal _steth = IERC20(0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84);
+    IERC20 internal immutable _steth = IERC20(0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84);
 
     // eth mainnet reth
-    IERC20 internal _reth = IERC20(0xae78736Cd615f374D3085123A210448E74Fc6393);
+    IERC20 internal immutable _reth = IERC20(0xae78736Cd615f374D3085123A210448E74Fc6393);
 
     // eth mainnet sfrxeth
-    IsfrxETH internal _sfrxeth = IsfrxETH(0xac3E018457B222d93114458476f3E3416Abbe38F);
+    IsfrxETH internal immutable _sfrxeth = IsfrxETH(0xac3E018457B222d93114458476f3E3416Abbe38F);
     // eth mainnet frxeth
-    IERC20 internal _frxeth = IERC20(0x5E8422345238F34275888049021821E8E08CAa1f);
+    IERC20 internal immutable _frxeth = IERC20(0x5E8422345238F34275888049021821E8E08CAa1f);
 
     // all the curve pools needed for swaps
-    ICurvePool1 internal _ethToSteth = ICurvePool1(0xDC24316b9AE028F1497c275EB9192a3Ea0f67022);
-    ICurvePool2 internal _ethToReth = ICurvePool2(0x0f3159811670c117c372428D4E69AC32325e4D0F);
-    ICurvePool1 internal _ethToFrxeth = ICurvePool1(0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577);
+    ICurvePool1 internal immutable _ethToSteth = ICurvePool1(0xDC24316b9AE028F1497c275EB9192a3Ea0f67022);
+    ICurvePool2 internal immutable _ethToReth = ICurvePool2(0x0f3159811670c117c372428D4E69AC32325e4D0F);
+    ICurvePool1 internal immutable _ethToFrxeth = ICurvePool1(0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577);
 
     // curve tryLSD mainnet pool
-    ICurvePool2 internal _tryLSD = ICurvePool2(0x2570f1bD5D2735314FC102eb12Fc1aFe9e6E7193);
+    ICurvePool2 internal immutable _tryLSD = ICurvePool2(0x2570f1bD5D2735314FC102eb12Fc1aFe9e6E7193);
 
     /*//////////////////////////////////////////////////////////////
                             CONSTRUCTOR
