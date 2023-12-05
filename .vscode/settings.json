@@ -7,8 +7,5 @@
   },
   "npm.exclude": "**/lib/**",
   "solidity.formatter": "forge",
-  "solidity.remappings": [
-    "@openzeppelin/=lib/openzeppelin-contracts/contracts/",
-    "forge-std/=lib/forge-std/src/",
-  ],
+  "solidity.remappings": ["@openzeppelin/=lib/openzeppelin-contracts/contracts/", "forge-std/=lib/forge-std/src/"]
 }
