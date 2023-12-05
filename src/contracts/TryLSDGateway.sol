@@ -51,7 +51,7 @@ contract TryLSDGateway {
     error FailedToSendEth();
 
     /*//////////////////////////////////////////////////////////////
-                            EXTERNAL CONTRACTS
+                    VARIABLES & EXTERNAL CONTRACTS
     //////////////////////////////////////////////////////////////*/
 
     // eth mainnet wsteth
@@ -74,6 +74,9 @@ contract TryLSDGateway {
 
     // curve tryLSD mainnet pool
     ICurvePool2 internal immutable _TRYLSD = ICurvePool2(0x2570f1bD5D2735314FC102eb12Fc1aFe9e6E7193);
+
+    // Used to prevent a loop where pool would send eth to the gateway and trigger a deposit
+    bool internal _startedWithdraw;
 
     /*//////////////////////////////////////////////////////////////
                             CONSTRUCTOR
@@ -101,8 +104,6 @@ contract TryLSDGateway {
     /*//////////////////////////////////////////////////////////////
                             PAYABLE LOGIC
     //////////////////////////////////////////////////////////////*/
-
-    bool internal _startedWithdraw;
 
     function handleReceive() public payable {
         // should not send eth directly to this contract, use swapAndDeposit function
