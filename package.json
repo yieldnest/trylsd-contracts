@@ -31,7 +31,9 @@
     "test:coverage": "forge coverage",
     "test:coverage:report": "forge coverage --report lcov && genhtml lcov.info --branch-coverage --output-dir coverage",
     "anvil-mainnet": "export $(cat .env | xargs) && anvil --chain-id 1337 --fork-url $MAINNET_RPC_URL --fork-block-number $FORK_BLOCK_NUMBER",
-    "deploy:local": "export $(cat .env | xargs) && forge script DeployTryLSDGateway --broadcast --rpc-url $LOCAL_RPC_URL --private-key $PRIVATE_KEY"
+    "deploy:local": "export $(cat .env | xargs) && forge script DeployTryLSDGateway --broadcast --rpc-url $LOCAL_RPC_URL --private-key $PRIVATE_KEY",
+    "deploy:mainnet": "export $(cat .env | xargs) && forge script DeployTryLSDGateway --broadcast --rpc-url $MAINNET_RPC_URL --private-key=$PRIVATE_KEY --verify --optimize --optimizer-runs 200 --watch",
+    "verify:trylsdgateway": "export $(cat .env | xargs) && forge verify-contract $TRYLSD_GATEWAY_MAINNET_ADDRESS TryLSDGateway --watch"
   },
   "dependencies": {
     "solhint": "^3.6.2"
